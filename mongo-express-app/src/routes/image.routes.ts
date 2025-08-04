@@ -6,6 +6,6 @@ import { upload } from "../utils/upload";
 
 const router = Router();
 
-router.get("/upload", authMiddleware, upload.single("image"), uploadImage);
+router.post("/upload", authMiddleware, upload.single("image"), uploadImage);
 
 export default router;

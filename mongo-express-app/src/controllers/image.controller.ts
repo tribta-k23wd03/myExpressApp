@@ -2,7 +2,7 @@ import { Response } from "express";
 import { AuthRequest } from "../middlewares/auth.middlewares";
 import { Image } from "../models/Image";
 
-export const uploadImage = async (res: Response, req: AuthRequest) => {
+export const uploadImage = async (req: AuthRequest, res: Response) => {
   if (!req.file) {
     return res.status(400).json({ error: "Missing image file" });
   }
