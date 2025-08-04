@@ -5,4 +5,6 @@ const auth_middlewares_1 = require("../middlewares/auth.middlewares");
 const user_controller_1 = require("../controllers/user.controller");
 const router = (0, express_1.Router)();
 router.get("/me", auth_middlewares_1.authMiddleware, user_controller_1.getProfile);
+router.put("/me", auth_middlewares_1.authMiddleware, user_controller_1.updateProfile);
+router.delete("/me", auth_middlewares_1.authMiddleware, user_controller_1.deleteAccount);
 exports.default = router;

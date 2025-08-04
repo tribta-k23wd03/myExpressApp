@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateProfile = exports.getProfile = void 0;
+exports.deleteAccount = exports.updateProfile = exports.getProfile = void 0;
 const User_1 = require("../models/User");
 const getProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.json({ user: req.user });
@@ -22,3 +22,9 @@ const updateProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     res.json({ user: updated });
 });
 exports.updateProfile = updateProfile;
+const deleteAccount = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    yield User_1.User.findByIdAndDelete((_a = req.user) === null || _a === void 0 ? void 0 : _a.id);
+    res.json({ message: "User Deleted!" });
+});
+exports.deleteAccount = deleteAccount;

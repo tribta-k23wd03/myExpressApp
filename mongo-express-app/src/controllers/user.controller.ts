@@ -16,3 +16,8 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
 
   res.json({ user: updated });
 };
+
+export const deleteAccount = async (req: AuthRequest, res: Response) => {
+  await User.findByIdAndDelete(req.user?.id);
+  res.json({ message: "User Deleted!" });
+};
