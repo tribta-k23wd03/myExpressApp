@@ -42,15 +42,38 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = exports.register = void 0;
+exports.logout = exports.refreshTokenHandler = exports.login = exports.register = void 0;
+const jwt = __importStar(require("jsonwebtoken"));
 const authService = __importStar(require("../services/auth.services"));
+const User_1 = require("../models/User");
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield authService.register(req.body);
     res.status(201).json({ user });
 });
 exports.register = register;
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const token = yield authService.login(req.body);
-    res.status(200).json({ token });
+    const { accessToken, refreshToken } = yield authService.login(req.body);
+    res.status(200).json({ accessToken, refreshToken });
 });
 exports.login = login;
+const refreshTokenHandler = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const token = req.body.refreshToken;
+    if (!token)
+        return res.status(400).json({ message: "Missing refresh token" });
+    const newAccessToken = yield authService.refreshToken(token);
+    res.json({ accessToken: newAccessToken });
+});
+exports.refreshTokenHandler = refreshTokenHandler;
+const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const token = req.body.refreshToken;
+    if (!token)
+        return res.status(400).json({ message: "Missing refresh token" });
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = yield User_1.User.findById(decoded.id);
+    if (user) {
+        user.refreshToken = "";
+        yield user.save();
+    }
+    res.json({ message: "Logged Out Success!" });
+});
+exports.logout = logout;

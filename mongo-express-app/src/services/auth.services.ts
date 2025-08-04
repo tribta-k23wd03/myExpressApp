@@ -38,16 +38,42 @@ export const register = async ({
   return await newUser.save();
 };
 
-export const login = async ({ email, password }: LoginDTO): Promise<string> => {
+export const login = async ({
+  email,
+  password,
+}: LoginDTO): Promise<{ accessToken: string; refreshToken: string }> => {
   const user = await User.findOne({ email });
   if (!user) throw new Error("Invalid Email.");
 
-  const isMatch = await comparePassword(password, user.password); 
+  const isMatch = await comparePassword(password, user.password);
   if (!isMatch) throw new Error("Invalid Password.");
 
   const payload = { id: user._id, email: user.email };
 
-  const token = jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: "1d" });
+  const accessToken = jwt.sign(payload, process.env.JWT_SECRET!, {
+    expiresIn: "15m",
+  });
+  const refreshToken = jwt.sign(payload, process.env.JWT_SECRET!, {
+    expiresIn: "1d",
+  });
 
-  return token;
+  user.refreshToken = refreshToken;
+  await user.save();
+
+  return { accessToken, refreshToken };
+};
+
+export const refreshToken = async (token: string): Promise<string> => {
+  const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string };
+  const user = await User.findById(decoded.id);
+  if (!user || user.refreshToken !== token) {
+    throw new Error("Invalid Refresh Token");
+  }
+
+  const newAccessToken = jwt.sign(
+    { id: user._id, email: user.email },
+    process.env.JWT_SECRET!,
+    { expiresIn: "15m" }
+  );
+  return newAccessToken;
 };

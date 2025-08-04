@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = exports.register = void 0;
+exports.refreshToken = exports.login = exports.register = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const User_1 = require("../models/User");
 const hash_1 = require("../utils/hash");
@@ -32,7 +32,7 @@ const register = (_a) => __awaiter(void 0, [_a], void 0, function* ({ name, emai
     return yield newUser.save();
 });
 exports.register = register;
-const login = (_a) => __awaiter(void 0, [_a], void 0, function* ({ email, password }) {
+const login = (_a) => __awaiter(void 0, [_a], void 0, function* ({ email, password, }) {
     const user = yield User_1.User.findOne({ email });
     if (!user)
         throw new Error("Invalid Email.");
@@ -40,7 +40,24 @@ const login = (_a) => __awaiter(void 0, [_a], void 0, function* ({ email, passwo
     if (!isMatch)
         throw new Error("Invalid Password.");
     const payload = { id: user._id, email: user.email };
-    const token = jsonwebtoken_1.default.sign(payload, process.env.JWT_SECRET, { expiresIn: "1d" });
-    return token;
+    const accessToken = jsonwebtoken_1.default.sign(payload, process.env.JWT_SECRET, {
+        expiresIn: "15m",
+    });
+    const refreshToken = jsonwebtoken_1.default.sign(payload, process.env.JWT_SECRET, {
+        expiresIn: "1d",
+    });
+    user.refreshToken = refreshToken;
+    yield user.save();
+    return { accessToken, refreshToken };
 });
 exports.login = login;
+const refreshToken = (token) => __awaiter(void 0, void 0, void 0, function* () {
+    const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
+    const user = yield User_1.User.findById(decoded.id);
+    if (!user || user.refreshToken !== token) {
+        throw new Error("Invalid Refresh Token");
+    }
+    const newAccessToken = jsonwebtoken_1.default.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: "15m" });
+    return newAccessToken;
+});
+exports.refreshToken = refreshToken;
