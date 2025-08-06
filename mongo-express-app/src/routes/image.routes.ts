@@ -8,7 +8,7 @@ const router = Router();
 
 router.post(
   "/upload",
-  authMiddleware,
+  /* authMiddleware, */
   cloudinaryUpload.single("image"),
   uploadImage
 );
