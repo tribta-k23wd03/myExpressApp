@@ -47,13 +47,34 @@ const jwt = __importStar(require("jsonwebtoken"));
 const authService = __importStar(require("../services/auth.services"));
 const User_1 = require("../models/User");
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield authService.register(req.body);
-    res.status(201).json({ user });
+    try {
+        const user = yield authService.register(req.body);
+        res.status(201).json({ user });
+    }
+    catch (err) {
+        if (err.message === "Email already exists!") {
+            res.status(409).json({ error: err.message });
+        }
+        else {
+            res.status(500).json({ error: err.message });
+        }
+    }
 });
 exports.register = register;
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { accessToken, refreshToken } = yield authService.login(req.body);
-    res.status(200).json({ accessToken, refreshToken });
+    try {
+        const { accessToken, refreshToken } = yield authService.login(req.body);
+        res.status(200).json({ accessToken, refreshToken });
+    }
+    catch (err) {
+        if (err.message === "Invalid Email." ||
+            err.message === "Invalid Password.") {
+            res.status(401).json({ error: err.message });
+        }
+        else {
+            res.status(500).json({ error: err.message });
+        }
+    }
 });
 exports.login = login;
 const refreshTokenHandler = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
