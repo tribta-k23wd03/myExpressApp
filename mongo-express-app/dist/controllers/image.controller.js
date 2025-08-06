@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.uploadImage = void 0;
+exports.getPublicImage = exports.uploadImage = void 0;
 const Image_1 = require("../models/Image");
 const cloudinary_1 = require("../config/cloudinary");
 const uploadImage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -41,3 +41,13 @@ const uploadImage = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     uploadStream.end(req.file.buffer);
 });
 exports.uploadImage = uploadImage;
+const getPublicImage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const images = yield Image_1.Image.find({
+        status: "approved",
+        visibility: "public",
+    })
+        .populate("user", "email")
+        .sort({ createdAt: -1 });
+    res.json({ images });
+});
+exports.getPublicImage = getPublicImage;

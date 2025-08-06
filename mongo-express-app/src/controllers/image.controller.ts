@@ -37,3 +37,13 @@ export const uploadImage = async (req: AuthRequest, res: Response) => {
   );
   uploadStream.end(req.file.buffer);
 };
+export const getPublicImage = async (req: AuthRequest, res: Response) => {
+  const images = await Image.find({
+    status: "approved",
+    visibility: "public",
+  })
+    .populate("user", "email")
+    .sort({ createdAt: -1 });
+
+  res.json({ images });
+};
