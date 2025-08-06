@@ -8,11 +8,11 @@ const router = Router();
 
 router.post(
   "/upload",
-  /* authMiddleware, */
+  authMiddleware,
   cloudinaryUpload.single("image"),
   uploadImage
 );
 
-router.get("/public", getPublicImage);
+router.get("/public", getPublicImage)
 
 export default router;

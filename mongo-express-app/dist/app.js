@@ -16,6 +16,6 @@ app.use("/api/auth", auth_routes_1.default);
 app.use("/api/user", user_routes_1.default);
 app.use("/api/admin", admin_routes_1.default);
 app.use("/api/images", image_routes_1.default);
-app.use("/api/comments", like_routes_1.default);
-app.use("/api/likes", comment_routes_1.default);
+app.use("/api/comments", comment_routes_1.default);
+app.use("/api/likes", like_routes_1.default);
 exports.default = app;

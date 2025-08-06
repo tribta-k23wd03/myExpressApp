@@ -16,7 +16,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/images", imageRoutes);
 
-app.use("/api/comments", likeRoutes);
-app.use("/api/likes", commentRoutes);
+app.use("/api/comments", commentRoutes);
+app.use("/api/likes", likeRoutes);
 
 export default app;
