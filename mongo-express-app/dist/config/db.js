@@ -17,7 +17,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {
-    yield mongoose_1.default.connect(process.env.MONGO_URI);
-    console.log("MongoDB connected!!!");
+    yield mongoose_1.default.connect(process.env.MONGO_ATLAS_URI);
+    console.log("Mongo Atlas connected!!!");
 });
 exports.connectDB = connectDB;

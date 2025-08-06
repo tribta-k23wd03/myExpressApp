@@ -37,7 +37,8 @@ exports.Image = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const ImageSchema = new mongoose_1.Schema({
     user: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true },
-    fileName: { type: String, required: true },
+    imageUrl: { type: String, required: true },
+    publicId: { type: String, required: true },
     description: { type: String },
     visibility: { type: String, enum: ["public", "private"], default: "public" },
     status: { type: String, enum: ["pending", "approved"], default: "pending" },

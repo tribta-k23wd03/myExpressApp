@@ -2,10 +2,15 @@ import { Router } from "express";
 
 import { authMiddleware } from "../middlewares/auth.middlewares";
 import { uploadImage } from "../controllers/image.controller";
-import { upload } from "../utils/upload";
+import { cloudinaryUpload } from "../utils/cloudinaryUpload";
 
 const router = Router();
 
-router.post("/upload", authMiddleware, upload.single("image"), uploadImage);
+router.post(
+  "/upload",
+  authMiddleware,
+  cloudinaryUpload.single("image"),
+  uploadImage
+);
 
 export default router;

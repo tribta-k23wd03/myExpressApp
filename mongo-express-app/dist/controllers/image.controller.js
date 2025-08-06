@@ -11,23 +11,33 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.uploadImage = void 0;
 const Image_1 = require("../models/Image");
+const cloudinary_1 = require("../config/cloudinary");
 const uploadImage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     if (!req.file) {
         return res.status(400).json({ error: "Missing image file" });
     }
     const { description, visibility } = req.body;
-    const newImage = new Image_1.Image({
-        user: (_a = req.user) === null || _a === void 0 ? void 0 : _a.id,
-        fileName: req.file.filename,
-        description,
-        visibility: visibility === "private" ? "private" : "public",
-        status: "pending",
-    });
-    const saved = yield newImage.save();
-    res.status(201).json({
-        message: "image uploaded. Awaiting admin approval!",
-        image: saved,
-    });
+    const uploadStream = cloudinary_1.cloudinary.uploader.upload_stream({
+        folder: "myImages",
+    }, (error, result) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a;
+        if (error || !result) {
+            return res.status(500).json({ error: "Upload to Cloudinary failed!" });
+        }
+        const newImage = new Image_1.Image({
+            user: (_a = req.user) === null || _a === void 0 ? void 0 : _a.id,
+            imageUrl: result.secure_url,
+            publicId: result.public_id,
+            description,
+            visibility: visibility === "private" ? "private" : "public",
+            status: "pending",
+        });
+        const saved = yield newImage.save();
+        res.status(201).json({
+            message: "image uploaded. Awaiting admin approval!",
+            image: saved,
+        });
+    }));
+    uploadStream.end(req.file.buffer);
 });
 exports.uploadImage = uploadImage;
