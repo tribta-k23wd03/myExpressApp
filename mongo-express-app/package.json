@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"tsc --watch\" \"node --watch dist/server.js\""
+    "dev": "concurrently \"tsc --watch\" \"node --watch dist/server.js\"",
+    "test": "jest",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
